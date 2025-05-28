@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package fridge;
+
+option go_package = "danielches.fridge.v1;fridgev1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service FridgeService {
+  rpc OpenFridge(OpenRequest) returns (OpenResponse);
+  rpc CloseFridge(CloseRequest) returns (CloseResponse);
+  rpc AddProduct(AddProductRequest) returns (Product);
+  rpc GetProduct(GetProductRequest) returns (Product);
+  rpc ListProducts(google.protobuf.Empty) returns (stream Product);
+  rpc RemoveProduct(RemoveProductRequest) returns (google.protobuf.Empty);
+  rpc IsExpiredProduct(IsExpiredProductRequest) returns (IsExpiredProductResponse);
+  rpc GetExpiringProducts(ExpiringProductsRequest) returns (stream Product);
+}
+
+message OpenRequest {
+  bool to_open = 1;
+}
+
+message OpenResponse {
+  bool is_open = 1;
+}
+
+message CloseRequest {
+  bool to_close = 1;
+}
+
+message CloseResponse {
+  bool is_closed = 1;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  int32 quantity = 3;
+  string category = 4;
+  google.protobuf.Timestamp expiry_date = 5;
+  google.protobuf.Timestamp date_added = 6;
+}
+
+message AddProductRequest {
+  string name = 1;
+  int32 quantity = 2;
+  string category = 3;
+  google.protobuf.Timestamp expiry_date = 4;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message RemoveProductRequest {
+  string id = 1;
+}
+
+message IsExpiredProductRequest {
+  string id = 1;
+}
+
+message IsExpiredProductResponse {
+  bool is_expired = 1;
+  Product product = 2;
+  int64 days_remaining = 3;
+}
+
+message ExpiringProductsRequest {
+  int32 days_threshold = 1;
+}
