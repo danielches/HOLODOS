@@ -4,11 +4,8 @@ import (
 	"HOLODOS/internal/models"
 	"HOLODOS/internal/storage"
 	"errors"
+	"github.com/google/uuid"
 	"time"
-)
-
-var (
-	ErrInvalidProduct = errors.New("invalid product data")
 )
 
 type FridgeService struct {
@@ -21,7 +18,7 @@ func NewFridgeService(storage *storage.MemoryStorage) *FridgeService {
 
 func (s *FridgeService) AddProduct(product models.Product) (models.Product, error) {
 	if product.Name == "" || product.Quantity <= 0 {
-		return models.Product{}, ErrInvalidProduct
+		return models.Product{}, errors.New("invalid product data")
 	}
 
 	product.ID = generateID()
@@ -83,5 +80,5 @@ func (s *FridgeService) GetExpiringProducts(daysThreshold int) ([]models.Product
 }
 
 func generateID() string {
-	return "product_" + time.Now().Format("20060102150405")
+	return uuid.New().String()
 }

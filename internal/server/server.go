@@ -5,7 +5,7 @@ import (
 	"HOLODOS/internal/service"
 	fridgev1 "HOLODOS/proto"
 	"context"
-	"errors"
+	"log"
 	"time"
 
 	"google.golang.org/grpc/codes"
@@ -63,10 +63,8 @@ func (s *FridgeServer) GetProduct(ctx context.Context, req *fridgev1.GetProductR
 
 	product, err := s.service.GetProduct(req.Id)
 	if err != nil {
-		if errors.Is(err, models.ErrProductNotFound) {
-			return nil, status.Error(codes.NotFound, "product not found")
-		}
-		return nil, status.Error(codes.Internal, err.Error())
+		log.Println("Error getting product: product not found")
+		return nil, status.Error(codes.NotFound, "product not found")
 	}
 
 	return convertToProtoProduct(product), nil
@@ -93,10 +91,8 @@ func (s *FridgeServer) RemoveProduct(ctx context.Context, req *fridgev1.RemovePr
 	}
 
 	if err := s.service.RemoveProduct(req.Id); err != nil {
-		if errors.Is(err, models.ErrProductNotFound) {
-			return nil, status.Error(codes.NotFound, "product not found")
-		}
-		return nil, status.Error(codes.Internal, err.Error())
+		log.Println("Error removing product: product not found")
+		return nil, status.Error(codes.NotFound, "product not found")
 	}
 
 	return &emptypb.Empty{}, nil
@@ -109,10 +105,8 @@ func (s *FridgeServer) IsExpiredProduct(ctx context.Context, req *fridgev1.IsExp
 
 	product, isExpired, daysRemaining, err := s.service.CheckProductExpiry(req.Id)
 	if err != nil {
-		if errors.Is(err, models.ErrProductNotFound) {
-			return nil, status.Error(codes.NotFound, "product not found")
-		}
-		return nil, status.Error(codes.Internal, err.Error())
+		log.Println("Error getting product status: product not found")
+		return nil, status.Error(codes.NotFound, "product not found")
 	}
 
 	return &fridgev1.IsExpiredProductResponse{

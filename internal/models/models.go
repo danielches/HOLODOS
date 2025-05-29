@@ -1,12 +1,7 @@
 package models
 
 import (
-	"errors"
 	"time"
-)
-
-var (
-	ErrProductNotFound = errors.New("product not found")
 )
 
 type Product struct {
